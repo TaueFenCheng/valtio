@@ -20,20 +20,19 @@ const NavItem = forwardRef<HTMLElement, React.PropsWithChildren<NavItemProps>>(
     return (
       //@ts-ignore
       <li ref={ref}>
-        <Link href={isPublished ? href! : fallbackHref}>
-          <a
-            className={clsx('block border-l pl-4 -ml-px font-normal text-md', {
-              'text-sky-500 border-current dark:text-sky-400 font-semibold':
-                isActive,
-              'border-transparent hover:border-gray-400 dark:hover:border-gray-500':
-                !isActive,
-              'text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300':
-                !isActive && isPublished,
-              'text-gray-400': !isActive && !isPublished,
-            })}
-          >
-            {children}
-          </a>
+        <Link
+          href={isPublished ? href! : fallbackHref}
+          className={clsx('block border-l pl-4 -ml-px font-normal text-md', {
+            'text-sky-500 border-current dark:text-sky-400 font-semibold':
+              isActive,
+            'border-transparent hover:border-gray-400 dark:hover:border-gray-500':
+              !isActive,
+            'text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300':
+              !isActive && isPublished,
+            'text-gray-400': !isActive && !isPublished,
+          })}
+        >
+          {children}
         </Link>
       </li>
     )

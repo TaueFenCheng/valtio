@@ -94,8 +94,11 @@ export function NavItems() {
   return (
     <>
       <li>
-        <Link href="/docs/introduction/getting-started">
-          <a className="hover:text-sky-500 dark:hover:text-sky-400">Docs</a>
+        <Link
+          href="/docs/introduction/getting-started"
+          className="hover:text-sky-500 dark:hover:text-sky-400"
+        >
+          Docs
         </Link>
       </li>
     </>
@@ -156,17 +159,16 @@ export default function Header({
             )}
           >
             <div className="relative flex items-center">
-              <Link href="/">
-                <a
-                  className="mr-3 flex-none overflow-hidden md:w-auto text-gray-900 dark:text-gray-50"
-                  onContextMenu={(e) => {
-                    e.preventDefault()
-                    Router.push('/')
-                  }}
-                >
-                  Valtio
-                  <span className="sr-only">Valtio home page</span>
-                </a>
+              <Link
+                href="/"
+                className="mr-3 flex-none overflow-hidden md:w-auto text-gray-900 dark:text-gray-50"
+                onContextMenu={(e) => {
+                  e.preventDefault()
+                  Router.push('/')
+                }}
+              >
+                Valtio
+                <span className="sr-only">Valtio home page</span>
               </Link>
               <div className="relative hidden lg:flex items-center ml-auto">
                 <nav className="text-sm leading-6 font-semibold text-gray-700 dark:text-gray-200">

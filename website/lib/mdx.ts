@@ -7,49 +7,53 @@ import { remarkCodeSandboxURLUpdater } from './remarkCodeSandboxURLUpdater'
 
 // Remark packages
 import remarkGfm from 'remark-gfm'
-import oembedTransformer from '@remark-embedder/transformer-oembed'
 import remarkEmbedder from '@remark-embedder/core'
 import type { TransformerInfo } from '@remark-embedder/core'
+import oembedTransformer from '@remark-embedder/transformer-oembed'
 import { remarkMdxImages } from 'remark-mdx-images'
+import type * as U from 'unified'
 
 // Rehype packages
 import rehypePrismPlus from 'rehype-prism-plus'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import type * as U from 'unified'
 
 const root = path.resolve(process.cwd(), '../')
 const docsPath = path.join(root, 'docs')
 
-function handleEmbedderError({ url }: { url: string }) {
-  return `<p>Error embedding <a href="${url}">${url}</a>.`
+function isCodeSandboxUrl(value: string) {
+  try {
+    const hostname = new URL(value).hostname
+    return hostname === 'codesandbox.io' || hostname === 'www.codesandbox.io'
+  } catch {
+    return false
+  }
+}
+
+// Keep oEmbed support for other providers, but leave CodeSandbox URLs as links.
+const nonCodeSandboxOEmbedTransformer = {
+  ...oembedTransformer,
+  shouldTransform(url: string) {
+    return (
+      !isCodeSandboxUrl(url) && oembedTransformer.shouldTransform(url)
+    )
+  },
 }
 
 type GottenHTML = string | null
+
+function handleEmbedderError({ url }: { url: string }) {
+  return `<p>Error embedding <a href="${url}">${url}</a>.</p>`
+}
+
 function handleEmbedderHtml(html: GottenHTML, info: TransformerInfo) {
   if (!html) return null
 
   const url = new URL(info.url)
-  // matches youtu.be and youtube.com
   if (/youtu\.?be/.test(url.hostname)) {
-    // this allows us to set youtube embeds to 100% width and the
-    // height will be relative to that width with a good aspect ratio
-    return makeEmbed(html, 'youtube')
-  }
-  if (url.hostname.includes('codesandbox.io')) {
-    return makeEmbed(html, 'codesandbox')
+    return `<div class="embed" data-embed-type="youtube"><div style="padding-bottom: 18px;">${html}</div></div>`
   }
   return html
-}
-
-function makeEmbed(html: string, type: string) {
-  return `
-  <div class="embed" data-embed-type="${type}">
-    <div style="padding-bottom: 18px;">
-      ${html}
-    </div>
-  </div>
-`
 }
 
 const remarkPlugins: U.PluggableList = [
@@ -59,7 +63,7 @@ const remarkPlugins: U.PluggableList = [
     {
       handleError: handleEmbedderError,
       handleHTML: handleEmbedderHtml,
-      transformers: [oembedTransformer],
+      transformers: [nonCodeSandboxOEmbedTransformer],
     },
   ],
 ]
